@@ -1,0 +1,8 @@
+[patch."/usr/share/applications/signal-desktop.desktop"]
+exec = "signal-desktop --enable-features=UseOzonePlatform --ozone-platform=wayland -- %u"
+
+[patch."/usr/share/applications/apple-music.desktop"]
+exec = "apple-music --enable-features=UseOzonePlatform --ozone-platform=wayland --no-sandbox %U"
+
+[patch."/usr/share/applications/insomnia.desktop"]
+exec = "/opt/Insomnia/insomnia --enable-features=UseOzonePlatform --ozone-platform=wayland %U"

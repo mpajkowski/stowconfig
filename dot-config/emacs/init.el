@@ -1,10 +1,10 @@
 (setq native-comp-speed 3)
-(defvar elpaca-installer-version 0.6)
+(defvar elpaca-installer-version 0.7)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                              :ref nil
+                              :ref nil :depth 1
                               :files (:defaults "elpaca-test.el" (:exclude "extensions"))
                               :build (:not elpaca--activate-package)))
 (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
@@ -17,8 +17,10 @@
     (when (< emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
         (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                 ((zerop (call-process "git" nil buffer t "clone"
-                                       (plist-get order :repo) repo)))
+                 ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                 ,@(when-let ((depth (plist-get order :depth)))
+                                                     (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                 ,(plist-get order :repo) ,repo))))
                  ((zerop (call-process "git" nil buffer t "checkout"
                                        (or (plist-get order :ref) "--"))))
                  (emacs (concat invocation-directory invocation-name))
@@ -89,7 +91,7 @@
 ;; font
 (if (eq system-type 'darwin)
     (add-to-list 'default-frame-alist '(font . "Monaco-15"))
-    (add-to-list 'default-frame-alist '(font . "Monego-12")))
+    (add-to-list 'default-frame-alist '(font . "Monaco-12")))
 
 ;; global settings
 (setq warning-minimum-level 'error)
@@ -131,7 +133,6 @@
 (run-with-idle-timer 5 t 'garbage-collect)
 
 (use-package hl-line
-  :elpaca nil
   :ensure nil
   :hook
   (prog-mode . hl-line-mode)
@@ -148,7 +149,7 @@
         completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package vertico
-  :elpaca (vertico :type git
+  :ensure (vertico :type git
                    :host github
                    :repo "minad/vertico"
                    :files (:defaults "extensions/*"))
@@ -208,20 +209,17 @@
   (marginalia-mode))
 
 (use-package project
-  :elpaca nil
   :ensure nil
   :after (consult)
   :config
   (add-to-list 'project-switch-commands '(consult-ripgrep "Ripgrep" "r") t))
 
 (use-package savehist
-  :elpaca nil
   :ensure nil
   :init
   (savehist-mode))
 
 (use-package uniquify
-  :elpaca nil
   :ensure nil
   :config
   (setq uniquify-separator "/"
@@ -266,7 +264,6 @@
 
 (use-package dired
   :ensure nil
-  :elpaca nil
   :demand t
   :after (evil evil-collection)
   :config
@@ -303,8 +300,6 @@
   :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 
 (use-package treesit
-  :elpaca nil
-  :ensure nil
   :config
   (setq treesit-language-source-alist
    '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
@@ -354,7 +349,6 @@
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
 
 (use-package eglot
-  :elpaca nil
   :ensure nil
   :hook
   (eglot-managed-mode . (lambda ()
@@ -373,18 +367,16 @@
                                   :cargo (:features "all")
                                   :check (:allTargets :json-false)))))
 (use-package eldoc
-  :elpaca nil
   :ensure nil
   :config
   (setq eldoc-echo-area-use-multiline-p nil))
 
 
 (use-package flymake
-  :elpaca nil
   :ensure nil
   :after (evil)
   :init
-  ;(add-to-list 'me/window-bottom-left-modes 'flymake-project-diagnostics-mode)
+  (add-to-list 'me/window-bottom-left-modes 'flymake-project-diagnostics-mode)
   :config
   (evil-make-overriding-map flymake-project-diagnostics-mode-map 'normal)
   (general-def 'normal flymake-project-diagnostics-mode-map "q" 'kill-buffer-and-window)
@@ -402,7 +394,7 @@
 
 (use-package vterm
   :after (evil evil-collection)
-  :elpaca (vterm :post-build
+  :ensure (vterm :post-build
                  (progn
                    (setq vterm-always-compile-module t)
                    (require 'vterm)
@@ -436,17 +428,20 @@
 (use-package restclient
   :defer t)
 
+(use-package transient)
+
 (use-package magit
-  :defer t)
+  :defer t
+  :after transient)
 
 (use-package magit-delta
   :defer t
   :hook
-  (magit-mode . magit-delta-mode))
+  (magit-mode . magit-delta-mode)
+  :after magit)
 
 ;; languages
 (use-package rust-ts-mode
-  :elpaca nil
   :ensure nil
   :defer t
   :mode ((rx ".rs" string-end) . rust-ts-mode)
@@ -457,13 +452,11 @@
   :defer t)
 
 (use-package toml-ts-mode
-  :elpaca nil
   :ensure nil
   :defer t
   :mode ("\\(?:Dockerfile\\|dockerfile\\)\\(?:\\..*\\)?" . dockerfile-ts-mode))
 
 (use-package dockerfile-ts-mode
-  :elpaca nil
   :ensure nil
   :defer t
   :mode ((rx "Dockerfile" string-end) . dockerfile-ts-mode))
@@ -502,14 +495,12 @@
   (zig-mode . eglot-ensure))
 
 (use-package c++-mode
-  :elpaca nil
   :ensure nil
   :defer t
   :hook
   (c++-mode . eglot-ensure))
 
 (use-package c-mode
-  :elpaca nil
   :ensure nil
   :defer t
   :hook
