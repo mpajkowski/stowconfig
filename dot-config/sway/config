@@ -171,3 +171,4 @@ exec --no-startup-id nm-applet --indicator
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec hash dbus-update-activation-environment 2>/dev/null && \
      dbus-update-activation-environment DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP=sway WAYLAND_DISPLAY --verbose
+exec --no-startup-id /usr/bin/pipewire
