@@ -39,7 +39,7 @@ bindsym $mod+Shift+d split v, $exec_term
 # start a terminal
 bindsym $mod+Shift+r split h, $exec_term
 
-bindsym Print exec grim -g "$(slurp)" - | swappy -f -
+bindsym Print exec grim -s 1 -g "$(slurp)" -t ppm - | swappy -f -
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -167,8 +167,9 @@ for_window [app_id="flameshot"] border pixel 0, floating enable, fullscreen disa
 include /etc/sway/config.d/*
 include $HOME/.config/sway/extra/*
 
-exec --no-startup-id nm-applet --indicator
-exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec hash dbus-update-activation-environment 2>/dev/null && \
      dbus-update-activation-environment DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP=sway WAYLAND_DISPLAY --verbose
-exec --no-startup-id /usr/bin/pipewire
+exec pipewire
+exec pipewire-pulse
+exec wireplumber

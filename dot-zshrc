@@ -61,3 +61,4 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 #export XDG_SESSION_DESKTOP=sway
 
 which sudo >/dev/null || alias sudo=doas
+alias ls="ls --color=auto"
