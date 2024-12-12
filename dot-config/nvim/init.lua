@@ -25,7 +25,7 @@ bootstrap_paq {
     'savq/paq-nvim',
     'BurntSushi/ripgrep',
     'nvim-lua/plenary.nvim',
-    { 'nvim-telescope/telescope.nvim', tag = '0.1.5' },
+    { 'nvim-telescope/telescope.nvim', tag = '0.1.8' },
     'nvim-tree/nvim-tree.lua',
     { 'nvim-treesitter/nvim-treesitter', dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' }, build = ':TSUpdate' },
     'tpope/vim-fugitive',
@@ -36,7 +36,7 @@ bootstrap_paq {
     'nvim-lualine/lualine.nvim',
     'akinsho/bufferline.nvim',
     'neovim/nvim-lspconfig',
-    { 'j-hui/fidget.nvim', branch = 'legacy' },
+    { 'j-hui/fidget.nvim' },
     'folke/trouble.nvim',
     'lervag/vimtex',
     'hrsh7th/cmp-nvim-lsp',
@@ -69,27 +69,18 @@ vim.opt.incsearch = true
 vim.opt.termguicolors = true
 
 vim.opt.updatetime = 50
+vim.opt.signcolumn = 'yes'
 
-local group = vim.api.nvim_create_augroup('MyGroup', {})
-
--- trim all whitespaces on save
---vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
---    group = group,
---    pattern = '*',
---    command = [[%s/\s\+$//e]]
---})
-
--- disable signcolumn on tree
-vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
-    group = group,
-    pattern = '*',
-    command = [[ setlocal signcolumn=yes ]]
-})
-
-vim.api.nvim_create_autocmd('FileType', {
-    group = group,
-    pattern = { 'NvimTree' },
-    command = [[ setlocal signcolumn=no ]]
+-- Trim trailing whitespaces on save for all files except markdown
+vim.api.nvim_create_autocmd("BufWritePre", {
+    pattern = "*",
+    callback = function()
+        if vim.bo.filetype ~= "markdown" then
+            local save = vim.fn.winsaveview()
+            vim.cmd([[silent! %s/\s\+$//e]])
+            vim.fn.winrestview(save)
+        end
+    end,
 })
 
 -- remap
@@ -116,7 +107,7 @@ vim.keymap.set('n', '<leader>jq', ':%!jq<CR>')
 -- bufdel
 require('bufdel').setup {
     next = 'tabs',
-    quit = true
+    quit = false
 }
 
 vim.keymap.set('n', '<C-x>k', vim.cmd.BufDel, { noremap = true })
@@ -297,12 +288,9 @@ vim.keymap.set('n', '<leader>nn', ':NvimTreeToggle<CR>')
 local telescope = require('telescope')
 local builtin = require('telescope.builtin')
 
-local is_in_config = string.find(vim.loop.cwd(), 'nvim') ~= nil
-
 local find_files = function()
     return builtin.find_files {
         hidden = true,
-        no_ignore = is_in_config,
         file_ignore_patterns = { 'node_modules', '.git', 'target' }
     }
 end
@@ -310,7 +298,6 @@ end
 local live_grep = function()
     return builtin.live_grep {
         hidden = true,
-        no_ignore = is_in_config,
         file_ignore_patterns = { 'node_modules', '.git', 'target' }
     }
 end
@@ -327,24 +314,11 @@ telescope.setup {
 
 -- treesitter
 require 'nvim-treesitter.configs'.setup {
-    -- A list of parser names, or 'all'
-    ensure_installed = { 'javascript', 'typescript', 'c', 'cpp', 'lua', 'rust', 'vim' },
-
-    -- Install parsers synchronously (only applied to `ensure_installed`)
+    ensure_installed = 'all',
     sync_install = false,
-
-    -- Automatically install missing parsers when entering buffer
-    -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
     auto_install = true,
-
     highlight = {
-        -- `false` will disable the whole extension
         enable = true,
-
-        -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-        -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-        -- Using this option may slow down your editor, and you may see some duplicate highlights.
-        -- Instead of true it can also be a list of languages
         additional_vim_regex_highlighting = false,
     },
 }
