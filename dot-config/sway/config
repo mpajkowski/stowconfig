@@ -28,7 +28,7 @@ set $mod Mod1
 # use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
-set $exec_term exec alacritty --working-directory $(swaycwd)
+set $exec_term exec alacritty --working-directory $(swayer cwd)
 
 # start a terminal
 bindsym $mod+Shift+Return $exec_term
