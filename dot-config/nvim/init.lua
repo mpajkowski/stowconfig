@@ -314,7 +314,7 @@ telescope.setup {
 
 -- treesitter
 require 'nvim-treesitter.configs'.setup {
-    ensure_installed = 'all',
+    ensure_installed = { 'c', 'vim', 'vimdoc', 'query', 'markdown', 'markdown_inline', 'rust', 'bash', 'lua', 'javascript', 'typescript' },
     sync_install = false,
     auto_install = true,
     highlight = {
