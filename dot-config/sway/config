@@ -24,7 +24,6 @@ set $left h
 set $right l
 set $mod Mod1
 
-
 # use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
@@ -153,7 +152,6 @@ bindsym $mod+r mode "resize"
 
 bar {
     position bottom
-
     status_command i3status
 }
 
@@ -162,14 +160,4 @@ input type:keyboard {
     xkb_layout pl
 }
 
-for_window [app_id="flameshot"] border pixel 0, floating enable, fullscreen disable, move absolute position 0 0
-
-include /etc/sway/config.d/*
 include $HOME/.config/sway/extra/*
-
-exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-exec hash dbus-update-activation-environment 2>/dev/null && \
-     dbus-update-activation-environment DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP=sway WAYLAND_DISPLAY --verbose
-exec pipewire
-exec pipewire-pulse
-exec wireplumber
