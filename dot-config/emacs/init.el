@@ -300,6 +300,7 @@
   :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 
 (use-package treesit
+  :ensure nil
   :config
   (setq treesit-language-source-alist
    '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
@@ -353,6 +354,7 @@
   :hook
   (eglot-managed-mode . (lambda ()
                           (eglot-inlay-hints-mode -1)
+                          (eldoc-mode -1)
                           (setq-local completion-at-point-functions
                                       (list
                                        (cape-capf-super
@@ -366,11 +368,9 @@
                                                 :extraArgs ["--target-dir" "/tmp/rust-analyzer-check" "--" "-D" "warnings"])
                                   :cargo (:features "all")
                                   :check (:allTargets :json-false)))))
-(use-package eldoc
-  :ensure nil
-  :config
-  (setq eldoc-echo-area-use-multiline-p nil))
 
+(use-package eldoc-box
+  :after (eglot eldoc))
 
 (use-package flymake
   :ensure nil

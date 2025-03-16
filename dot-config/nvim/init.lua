@@ -206,8 +206,8 @@ lspconfig.taplo.setup {
 }
 
 lspconfig.clangd.setup {
+    on_attach = on_attach,
     capabilities = capabilities,
-    on_attach = on_attach
 }
 
 lspconfig.gopls.setup {
@@ -217,7 +217,7 @@ lspconfig.gopls.setup {
 
 lspconfig.zls.setup {
     capabilities = capabilities,
-    on_attach = on_attach
+    on_attach = on_attach,
 }
 
 lspconfig.asm_lsp.setup {

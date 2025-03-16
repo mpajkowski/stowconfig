@@ -160,4 +160,9 @@ input type:keyboard {
     xkb_layout pl
 }
 
-include $HOME/.config/sway/extra/*
+for_window [app_id="wlroots"] shortcuts_inhibitor enable
+for_window [title="wlroots - WL-1"] shortcuts_inhibitor enable
+
+exec mako
+
+include $HOME/.config/sway/extra/*.conf

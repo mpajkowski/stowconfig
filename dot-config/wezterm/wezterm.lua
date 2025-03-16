@@ -12,6 +12,7 @@ if isdarwin() then
     config.font_size = 15
 else
     config.font_size = 12
+    config.window_decorations = "NONE"
 end
 
 config.window_padding = {
