@@ -250,6 +250,7 @@ layout {
 
 spawn-at-startup "xwayland-satellite"
 spawn-at-startup "mako"
+spawn-at-startup "waybar"
 
 environment {
     DISPLAY ":0"
