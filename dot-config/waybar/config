@@ -94,7 +94,7 @@
         "bat": "BAT2"
     },
     "network": {
-        "format-wifi": "",
+        "format-wifi": "  {essid}",
         "format-ethernet": "",
         "tooltip-format": "{ifname} via {gwaddr} ",
         "format-linked": "",
