@@ -1,26 +1,4 @@
-local function clone_paq()
-    local path = vim.fn.stdpath('data') .. '/site/pack/paqs/start/paqnvim'
-    local is_installed = vim.fn.empty(vim.fn.glob(path)) == 0
-    if not is_installed then
-        vim.fn.system { 'git', 'clone', '--depth=1', 'https://github.com/savq/paq-nvim.git', path }
-        return true
-    end
-end
-
-local function bootstrap_paq(packages)
-    local first_install = clone_paq()
-    vim.cmd.packadd('paq-nvim')
-    local paq = require('paq')
-    if first_install then
-        vim.notify('Installing plugins... If prompted, hit Enter to continue.')
-    end
-
-    -- Read and install packages
-    paq(packages)
-    paq.install()
-end
-
-bootstrap_paq {
+require 'paq' {
     'savq/paq-nvim',
     'neovim/nvim-lspconfig',
     'BurntSushi/ripgrep', -- telescope
@@ -29,6 +7,7 @@ bootstrap_paq {
     'nvim-tree/nvim-tree.lua',
     { 'nvim-treesitter/nvim-treesitter', dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' }, build = ':TSUpdate' },
     'FabijanZulj/blame.nvim',
+    'rebelot/kanagawa.nvim',
     'ojroques/nvim-bufdel',
     'nvim-tree/nvim-web-devicons',
     { 'saghen/blink.cmp', tag = "1.*", build = "cargo build --release" },
