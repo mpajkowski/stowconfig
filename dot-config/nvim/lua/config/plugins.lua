@@ -10,11 +10,17 @@ require 'paq' {
     'rebelot/kanagawa.nvim',
     'ojroques/nvim-bufdel',
     'nvim-tree/nvim-web-devicons',
-    { 'saghen/blink.cmp', tag = "1.*", build = "cargo build --release" },
-    { 'folke/trouble.nvim' },
-    { 'nvim-lualine/lualine.nvim' },
+    'folke/trouble.nvim',
+    'nvim-lualine/lualine.nvim',
+    'linrongbin16/lsp-progress.nvim',
+    'hrsh7th/cmp-nvim-lsp',
+    'hrsh7th/cmp-path',
+    'hrsh7th/cmp-buffer',
+    'hrsh7th/cmp-cmdline',
+    'hrsh7th/nvim-cmp',
+    'hrsh7th/cmp-vsnip',
+    'hrsh7th/vim-vsnip',
 }
-
 
 -- bufdel
 require 'bufdel'.setup {
@@ -66,11 +72,6 @@ require 'nvim-treesitter.configs'.setup {
     },
 }
 
--- blink
-require 'blink.cmp'.setup {
-    keymap = { preset = 'enter' }
-}
-
 -- trouble
 require 'trouble'.setup {}
 
@@ -101,14 +102,88 @@ require 'kanagawa'.setup {
 
 vim.cmd.colorscheme 'kanagawa-dragon'
 
--- lualine
 
-require('lualine').setup {
-    theme = 'kanagawa-dragon',
+-- lualine
+local lualine = require 'lualine'
+local lsp_progress = require 'lsp-progress'
+
+lualine.setup {
     options = {
         always_show_tabline = true,
     },
+    sections = {
+        lualine_c = {
+            function()
+                return lsp_progress.progress()
+            end
+        }
+    },
     tabline = {
         lualine_a = { 'buffers' }
+    },
+}
+
+vim.api.nvim_create_autocmd("User", {
+    group = vim.api.nvim_create_augroup('lualine_augroup', { clear = true }),
+    pattern = "LspProgressStatusUpdated",
+    callback = lualine.refresh,
+})
+
+lsp_progress.setup {
+    series_format = function(title, message, percentage, done)
+        local has_title = (type(title) == "string" and string.len(title) > 0)
+        local has_message = (type(message) == "string" and string.len(message) > 0)
+
+        if not(has_title or has_message) then
+            return nil
+        end
+
+        local builder = {}
+
+        if percentage then
+            table.insert(builder, string.format("(%.0f%%)", percentage))
+        end
+
+        if has_title then
+            table.insert(builder, title)
+        end
+
+        if has_message then
+            table.insert(builder, message)
+        end
+
+        if done then
+            table.insert(builder, "- done")
+        end
+
+        return table.concat(builder, " ")
+    end,
+}
+
+-- cmp
+local cmp = require 'cmp'
+cmp.setup {
+    snippet = {
+        expand = function(args)
+            vim.fn['vsnip#anonymous'](args.body)
+        end
+    },
+    mapping = {
+        ['<C-p>'] = cmp.mapping.select_prev_item(),
+        ['<C-n>'] = cmp.mapping.select_next_item(),
+        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<C-e>'] = cmp.mapping.close(),
+        ['<CR>'] = cmp.mapping.confirm {
+            behavior = cmp.ConfirmBehavior.Insert,
+            select = true,
+        }
+    },
+    sources = cmp.config.sources {
+        { name = 'nvim_lsp' },
+        { name = 'vsnips' },
+        { name = 'path' },
+        { name = 'buffer' },
     },
 }
