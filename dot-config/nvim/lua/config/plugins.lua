@@ -112,11 +112,7 @@ lualine.setup {
         always_show_tabline = true,
     },
     sections = {
-        lualine_c = {
-            function()
-                return lsp_progress.progress()
-            end
-        }
+        lualine_c = { lsp_progress.lualine }
     },
     tabline = {
         lualine_a = { 'buffers' }

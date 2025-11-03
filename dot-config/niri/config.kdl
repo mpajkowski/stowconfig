@@ -341,8 +341,8 @@ binds {
     Alt+Shift+Slash { show-hotkey-overlay; }
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
-    Alt+Shift+Return { spawn "bash" "-c" "$HOME/.config/niri/alacritty.sh"; }
-    Alt+T { spawn "alacritty"; }
+    Alt+Shift+Return { spawn "bash" "-c" "$HOME/.config/niri/term.sh foot"; }
+    Alt+T { spawn "foot"; }
     Alt+D { spawn "runi"; }
     //Alt+Shift+ { spawn "swaylock"; }
 
