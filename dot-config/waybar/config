@@ -1,3 +1,4 @@
+// vim: ft=json
 {
     "layer": "top", // Waybar at top layer
     "height": 24,
@@ -5,76 +6,55 @@
     "margin-left": 4,
     "margin-right": 4,
     "spacing": 0, // Gaps between modules (4px)
-    "modules-left": ["network", "wlr/taskbar"],
+    "modules-left": ["network", "cffi/niri-taskbar"],
     "modules-center": ["clock"],
-    "modules-right": ["cpu", "memory", "battery"],
+    "modules-right": ["cpu", "memory", "wireplumber", "battery"],
     "custom/logout": {
         "format": "⏻",
         "tooltip": false,
         "on-click": "niri msg action quit"
     },
-    "wlr/taskbar": {
-        // "all-outputs": true,
-        // "format": "{icon} {title} {short_state}",
-        "format": "{icon}",
-        "tooltip-format": "{title} | {app_id}",
-        "on-click": "activate",
-        "on-click-middle": "close",
-        "on-click-right": "fullscreen"
+    "network": {
+        "format-wifi": "  {essid}",
+        "tooltip-format": "{ifname} {ipaddr} via {gwaddr}",
+        "format-disconnected": "⚠",
+        "format-alt": "{ifname}: {ipaddr}/{cidr}"
     },
-    "keyboard-state": {
-        "numlock": true,
-        "capslock": true,
-        "format": "{name} {icon}",
-        "format-icons": {
-            "locked": "",
-            "unlocked": ""
-        }
-    },
-    "sway/mode": {
-        "format": "<span style=\"italic\">{}</span>"
-    },
-    "sway/scratchpad": {
-        "format": "{icon} {count}",
-        "show-empty": false,
-        "format-icons": ["", ""],
-        "tooltip": true,
-        "tooltip-format": "{app}: {title}"
-    },
-    "idle_inhibitor": {
-        "format": "{icon}",
-        "format-icons": {
-            "activated": "",
-            "deactivated": ""
-        }
-    },
-    "tray": {
-        // "icon-size": 21,
-        "spacing": 10
+    "cffi/niri-taskbar": {
+        "module_path": "/usr/lib/waybar/libniri_taskbar.so"
     },
     "clock": {
+        "interval": 1,
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-        "format": "{:%e %B %H:%M}"
+        "format": "{:%e %B %H:%M:%S}",
+        "locale": "pl_PL.UTF-8",
+        "calendar": {
+            "mode"          : "year",
+            "mode-mon-col"  : 3,
+            "weeks-pos"     : "right",
+            "on-scroll"     : 1,
+            "on-click-right": "mode",
+            "format": {
+                "months":     "<span color='#ffead3'><b>{}</b></span>",
+                "days":       "<span color='#ecc6d9'><b>{}</b></span>",
+                "weeks":      "<span color='#99ffdd'><b>W{}</b></span>",
+                "weekdays":   "<span color='#ffcc66'><b>{}</b></span>",
+                "today":      "<span color='#ff6699'><b><u>{}</u></b></span>"
+            }
+        },
+        "actions": {
+            "on-click-right": "mode",
+            "on-scroll-up": "shift_up",
+            "on-scroll-down": "shift_down"
+        }
     },
     "cpu": {
-        "format": "{usage}% ",
+        "format": " {usage}%",
         "tooltip": false
     },
     "memory": {
-        "format": "{}% "
-    },
-    "temperature": {
-        // "thermal-zone": 2,
-        // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
-        "critical-threshold": 80,
-        // "format-critical": "{temperatureC}°C {icon}",
-        "format": "{temperatureC}°C {icon}",
-        "format-icons": ["", "", ""]
-    },
-    "backlight": {
-        // "device": "acpi_video1",
-        "format": "{percent}% {icon}",
-        "format-icons": ["", "", "", "", "", "", "", "", ""]
+        "format": " {}%",
+        "tooltip-format": "{used:0.2f}G/{total:0.2G}G",
     },
     "battery": {
         "states": {
@@ -83,40 +63,16 @@
             "critical": 15
         },
         "format": "{capacity}% {icon}",
-        "format-charging": "{capacity}% ",
-        "format-plugged": "{capacity}% ",
+        "format-charging": "{capacity}%",
+        "format-plugged": "{capacity}%",
         "format-alt": "{time} {icon}",
         // "format-good": "", // An empty format will hide the module
         // "format-full": "",
         "format-icons": ["", "", "", "", ""]
     },
-    "battery#bat2": {
-        "bat": "BAT2"
-    },
-    "network": {
-        "format-wifi": "  {essid}",
-        "format-ethernet": "",
-        "tooltip-format": "{ifname} via {gwaddr} ",
-        "format-linked": "",
-        "format-disconnected": "⚠",
-        "format-alt": "{ifname}: {ipaddr}/{cidr}"
-    },
-    "pulseaudio": {
-        "format": "{volume}% {icon}",
-        "format-bluetooth": "{volume}% {icon}",
-        "format-bluetooth-muted": " {icon}",
-        "format-muted": "",
-        "format-source": "{volume}% ",
-        "format-source-muted": "",
-        "format-icons": {
-            "headphone": "",
-            "hands-free": "",
-            "headset": "",
-            "phone": "",
-            "portable": "",
-            "car": "",
-            "default": ["", "", ""]
-        },
+    "wireplumber": {
+        "format": "  {volume}%",
         "on-click": "pavucontrol"
     }
 }
+
