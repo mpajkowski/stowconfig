@@ -23,6 +23,8 @@ vim.opt.undofile = true
 vim.opt.winborder = 'rounded'
 vim.opt.showtabline = 1
 
+vim.opt.inccommand = "split"
+
 -- Trim trailing whitespaces on save for all files except markdown
 vim.api.nvim_create_autocmd("BufWritePre", {
     pattern = "*",
@@ -33,4 +35,18 @@ vim.api.nvim_create_autocmd("BufWritePre", {
             vim.fn.winrestview(save)
         end
     end,
+})
+
+-- Close quickfix list using single 'q'
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "qf",
+  callback = function()
+    vim.keymap.set("n", "q", function()
+      if vim.fn.getloclist(0, { winid = 0 }).winid ~= 0 then
+        vim.cmd("lclose")
+      else
+        vim.cmd("cclose")
+      end
+    end, { buffer = true, silent = true })
+  end,
 })

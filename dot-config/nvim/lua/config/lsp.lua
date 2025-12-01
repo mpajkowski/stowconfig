@@ -4,7 +4,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         local bufnr = ev.buf
         local opts = { buffer = bufnr, remap = false }
 
-        vim.keymap.set('n', '<leader>e', ":Trouble diagnostics<CR>", opts)
+        vim.keymap.set('n', '<leader>e', function() vim.diagnostic.setqflist({ open = true }) end, opts)
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
         vim.keymap.set('n', '<leader>vws', vim.lsp.buf.workspace_symbol, opts)
         vim.keymap.set('n', 'ga', vim.lsp.buf.code_action, opts)

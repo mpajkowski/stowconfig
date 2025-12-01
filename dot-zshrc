@@ -36,8 +36,8 @@ bindkey -M vicmd "^E" edit-command-line
 ## History
 ###
 HISTFILE=~/.zsh_history         # where to store zsh config
-HISTSIZE=1024                   # big history
-SAVEHIST=1024                   # big history
+HISTSIZE=65000                  # big history
+SAVEHIST=65000                  # big history
 
 setopt append_history           # append
 setopt hist_ignore_all_dups     # no duplicate
@@ -75,4 +75,6 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 
 which sudo >/dev/null || alias sudo=doas
 alias ls="ls --color=auto"
+alias ll="ls -l --color=auto"
+alias la="ls -la --color=auto"
 alias sv-user="SVDIR=$HOME/.config/service sv"

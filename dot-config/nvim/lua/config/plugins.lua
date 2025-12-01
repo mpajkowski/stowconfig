@@ -7,19 +7,14 @@ require 'paq' {
     'nvim-tree/nvim-tree.lua',
     { 'nvim-treesitter/nvim-treesitter', dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' }, build = ':TSUpdate' },
     'FabijanZulj/blame.nvim',
-    'rebelot/kanagawa.nvim',
     'ojroques/nvim-bufdel',
     'nvim-tree/nvim-web-devicons',
-    'folke/trouble.nvim',
     'nvim-lualine/lualine.nvim',
     'linrongbin16/lsp-progress.nvim',
-    'hrsh7th/cmp-nvim-lsp',
-    'hrsh7th/cmp-path',
-    'hrsh7th/cmp-buffer',
-    'hrsh7th/cmp-cmdline',
-    'hrsh7th/nvim-cmp',
-    'hrsh7th/cmp-vsnip',
-    'hrsh7th/vim-vsnip',
+    { 'nvim-lualine/lualine.nvim' },
+    'kristijanhusak/vim-hybrid-material',
+    { 'Saghen/blink.cmp', build = "cargo build --release", tag = 'v1.7.0' },
+    { 'rafamadriz/friendly-snippets' },
 }
 
 -- bufdel
@@ -72,35 +67,9 @@ require 'nvim-treesitter.configs'.setup {
     },
 }
 
--- trouble
-require 'trouble'.setup {}
-
 -- theme
-require 'kanagawa'.setup {
-    colors = {
-        theme = {
-            all = {
-                ui = {
-                    bg_gutter = "none"
-                }
-            }
-        }
-    },
-    overrides = function(colors)
-        local theme = colors.theme
-        return {
-            TelescopeTitle = { fg = theme.ui.special, bold = true },
-            TelescopePromptNormal = { bg = theme.ui.bg_p1 },
-            TelescopePromptBorder = { fg = theme.ui.bg_p1, bg = theme.ui.bg_p1 },
-            TelescopeResultsNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 },
-            TelescopeResultsBorder = { fg = theme.ui.bg_m1, bg = theme.ui.bg_m1 },
-            TelescopePreviewNormal = { bg = theme.ui.bg_dim },
-            TelescopePreviewBorder = { bg = theme.ui.bg_dim, fg = theme.ui.bg_dim },
-        }
-    end,
-}
-
-vim.cmd.colorscheme 'kanagawa-dragon'
+vim.o.background = dark
+vim.cmd.colorscheme 'hybrid_reverse'
 
 
 -- lualine
@@ -112,7 +81,7 @@ lualine.setup {
         always_show_tabline = true,
     },
     sections = {
-        lualine_c = { lsp_progress.lualine }
+        lualine_c = { lsp_progress.progress }
     },
     tabline = {
         lualine_a = { 'buffers' }
@@ -123,6 +92,13 @@ vim.api.nvim_create_autocmd("User", {
     group = vim.api.nvim_create_augroup('lualine_augroup', { clear = true }),
     pattern = "LspProgressStatusUpdated",
     callback = lualine.refresh,
+})
+
+vim.api.nvim_create_augroup("lualine_augroup", { clear = true })
+vim.api.nvim_create_autocmd("User", {
+  group = "lualine_augroup",
+  pattern = "LspProgressStatusUpdated",
+  callback = require("lualine").refresh,
 })
 
 lsp_progress.setup {
@@ -156,30 +132,15 @@ lsp_progress.setup {
     end,
 }
 
--- cmp
-local cmp = require 'cmp'
-cmp.setup {
-    snippet = {
-        expand = function(args)
-            vim.fn['vsnip#anonymous'](args.body)
-        end
-    },
-    mapping = {
-        ['<C-p>'] = cmp.mapping.select_prev_item(),
-        ['<C-n>'] = cmp.mapping.select_next_item(),
-        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ['<C-e>'] = cmp.mapping.close(),
-        ['<CR>'] = cmp.mapping.confirm {
-            behavior = cmp.ConfirmBehavior.Insert,
-            select = true,
-        }
-    },
-    sources = cmp.config.sources {
-        { name = 'nvim_lsp' },
-        { name = 'vsnips' },
-        { name = 'path' },
-        { name = 'buffer' },
-    },
+-- blink.cmp
+require 'blink.cmp'.setup {
+  keymap = { preset = "enter" },
+  sources = {
+    default = { "lsp", "path", "snippets", "buffer" },
+  }
+}
+
+-- blame
+require 'blame'.setup {
+    blame_options = { '-w' },
 }
