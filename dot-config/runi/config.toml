@@ -9,3 +9,6 @@ exec = "apple-music --enable-features=UseOzonePlatform --ozone-platform=wayland 
 
 [patch."/usr/share/applications/insomnia.desktop"]
 exec = "/opt/Insomnia/insomnia --enable-features=UseOzonePlatform --ozone-platform=wayland %U"
+
+[patch."/usr/share/applications/io.element.Element.desktop"]
+exec = "/usr/bin/element-desktop --enable-features=UseOzonePlatform --ozone-platform=wayland %U"
