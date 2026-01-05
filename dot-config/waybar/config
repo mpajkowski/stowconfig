@@ -1,7 +1,7 @@
 // vim: ft=json
 {
     "layer": "top", // Waybar at top layer
-    "height": 24,
+    "height": 28,
     "margin-top": 4,
     "margin-left": 4,
     "margin-right": 4,
