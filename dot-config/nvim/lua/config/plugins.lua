@@ -11,11 +11,15 @@ require 'paq' {
     'nvim-tree/nvim-web-devicons',
     'nvim-lualine/lualine.nvim',
     'linrongbin16/lsp-progress.nvim',
-    { 'nvim-lualine/lualine.nvim' },
     'kristijanhusak/vim-hybrid-material',
     { 'Saghen/blink.cmp', build = "cargo build --release", tag = 'v1.7.0' },
     { 'rafamadriz/friendly-snippets' },
 }
+
+-- theme
+vim.opt.termguicolors = true
+vim.opt.background = dark
+vim.cmd.colorscheme 'hybrid_reverse'
 
 -- bufdel
 require 'bufdel'.setup {
@@ -67,10 +71,6 @@ require 'nvim-treesitter.configs'.setup {
     },
 }
 
--- theme
-vim.o.background = dark
-vim.cmd.colorscheme 'hybrid_reverse'
-
 
 -- lualine
 local lualine = require 'lualine'
@@ -78,6 +78,7 @@ local lsp_progress = require 'lsp-progress'
 
 lualine.setup {
     options = {
+        theme = 'onedark',
         always_show_tabline = true,
     },
     sections = {
